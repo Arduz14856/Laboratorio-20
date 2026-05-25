@@ -33,9 +33,12 @@ RUN mkdir -p /var/www/html/storage/framework/cache/data \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
     && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-EXPOSE 80
+RUN echo "Listen \${PORT}" > /etc/apache2/ports.conf
 
-CMD php artisan migrate --force && \
+EXPOSE 10000
+
+CMD sed -i "s/80/${PORT}/g" /etc/apache2/sites-available/000-default.conf && \
+    php artisan migrate --force && \
     php artisan config:clear && \
     php artisan cache:clear && \
     apache2-foreground
